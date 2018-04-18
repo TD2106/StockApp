@@ -1,10 +1,14 @@
 package dao;
 
 import dbconnection.DBConnection;
+import model.Portfolio;
+import model.UserStock;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PortfolioDAO {
     private static Connection connection;
@@ -45,5 +49,15 @@ public class PortfolioDAO {
         ps.execute();
     }
 
-
+    public static Portfolio getUsersPortfolio(int userID) throws SQLException {
+        String sqlQuery = "SELECT stockname,quantity FROM userstock WHERE userid = ?";
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        ps.setInt(1, userID);
+        ResultSet rs = ps.executeQuery();
+        ArrayList<UserStock> stocks = new ArrayList<UserStock>();
+        while (rs.next()) {
+            stocks.add(new UserStock(rs.getString("stockname"), rs.getInt("quantity")));
+        }
+        return new Portfolio(stocks);
+    }
 }

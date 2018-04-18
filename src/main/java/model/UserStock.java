@@ -9,10 +9,11 @@ import java.math.BigDecimal;
 public class UserStock {
     private String stockName;
     private Stock stock;
-    private int quanity;
-    public UserStock(String stockName,int quanity){
+    private int quantity;
+
+    public UserStock(String stockName, int quantity) {
         this.stockName = stockName;
-        this.quanity = quanity;
+        this.quantity = quantity;
         try {
             stock = YahooFinance.get(this.stockName);
         } catch (IOException e) {
@@ -24,20 +25,20 @@ public class UserStock {
         return stockName;
     }
 
-    public int getQuanity() {
-        return quanity;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public BigDecimal getPrice(){
-        return stock.getQuote().getPrice();
+    public double getPrice() {
+        return stock.getQuote().getPrice().doubleValue();
     }
 
-    public void setQuanity(int quanity) {
-        this.quanity = quanity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
-    public BigDecimal getTotalValue(){
-        return stock.getQuote().getPrice().multiply(new BigDecimal(this.quanity));
+    public double getTotalValue() {
+        return stock.getQuote().getPrice().multiply(new BigDecimal(this.quantity)).doubleValue();
 
     }
 }

@@ -29,7 +29,7 @@ public class Portfolio {
     public void editStock(String stockName, int quantity) {
         for (UserStock stock : stocks) {
             if (stock.getStockName().equals(stockName)) {
-                stock.setQuanity(quantity);
+                stock.setQuantity(quantity);
                 break;
             }
         }
@@ -47,7 +47,7 @@ public class Portfolio {
     public double totalWorth() {
         double result = 0;
         for (UserStock stock : stocks) {
-            result += stock.getTotalValue().doubleValue();
+            result += stock.getTotalValue();
         }
         return result;
     }
