@@ -6,13 +6,15 @@ public class Comment {
     private int userID;
     private int commentID;
     private String content;
-    private Date commentDate;
+    private String date;
+    private String time;
 
-    public Comment(int userID, int commentID, String content, Date commentDate) {
+    public Comment(int userID, int commentID, String content, String date, String time) {
         this.userID = userID;
         this.commentID = commentID;
         this.content = content;
-        this.commentDate = commentDate;
+        this.date = date;
+        this.time = time;
     }
 
     public int getUserID() {
@@ -27,7 +29,11 @@ public class Comment {
         return content;
     }
 
-    public Date getCommentDate() {
-        return commentDate;
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
     }
 }

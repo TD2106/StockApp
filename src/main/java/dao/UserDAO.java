@@ -57,9 +57,19 @@ public class UserDAO {
         ps.execute();
     }
 
+    public String getUserName(int userID) throws SQLException {
+        String sqlQuery = "SELECT username FROM user WHERE userid = ?";
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        ResultSet rs = ps.executeQuery();
+        String result = "";
+        while (rs.next()) {
+            result = rs.getString("username");
+        }
+        return result;
+    }
     public static void main(String[] args){
         try {
-            System.out.println(isLoginInformationCorrect("Duy","123"));
+            addUser("Duy", "123", "td@gmail.com");
         } catch (SQLException e) {
             e.printStackTrace();
         }
