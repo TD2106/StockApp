@@ -4,11 +4,22 @@ public class User {
     private int userID;
     private String userName;
     private String userPassword;
+    private String email;
 
-    public User(int userID, String userName, String userPassword) {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public User(int userID, String userName, String userPassword, String email) {
         this.userID = userID;
         this.userName = userName;
         this.userPassword = userPassword;
+        this.email = email;
+
     }
 
     public int getUserID() {

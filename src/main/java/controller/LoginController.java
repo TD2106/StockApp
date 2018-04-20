@@ -1,5 +1,6 @@
 package controller;
 
+import dao.PortfolioDAO;
 import dao.UserDAO;
 import encryption.AES;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,7 +49,21 @@ public class LoginController {
         pass = AES.encrypt(pass, "stockapp");
         try {
             if (UserDAO.isLoginInformationCorrect(userName, pass)) {
-
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProfilePanel.fxml"));
+                Parent root = null;
+                try {
+                    root = loader.load();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ProfileController controller = loader.getController();
+                User user = UserDAO.getUser(userName, pass);
+                controller.setUser(user);
+                controller.setPortfolio(PortfolioDAO.getUsersPortfolio(user.getUserID()));
+                controller.setUp();
+                primaryStage.setTitle("Profile");
+                primaryStage.setScene(new Scene(root));
+                primaryStage.show();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Wrong username or password");
                 alert.show();
@@ -62,7 +78,6 @@ public class LoginController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RegisterPanel.fxml"));
         Parent root = loader.load();
         RegisterController controller = loader.getController();
-        System.out.println(primaryStage == null);
         controller.setPrimaryStage(primaryStage);
         primaryStage.setTitle("Register");
         primaryStage.setScene(new Scene(root));

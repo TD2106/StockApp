@@ -1,5 +1,6 @@
 package dao;
 import dbconnection.DBConnection;
+import model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -57,13 +58,27 @@ public class UserDAO {
         ps.execute();
     }
 
-    public String getUserName(int userID) throws SQLException {
+    public static String getUserName(int userID) throws SQLException {
         String sqlQuery = "SELECT username FROM user WHERE userid = ?";
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        ps.setInt(1, userID);
         ResultSet rs = ps.executeQuery();
         String result = "";
         while (rs.next()) {
             result = rs.getString("username");
+        }
+        return result;
+    }
+
+    public static User getUser(String userName, String pass) throws SQLException {
+        String sqlQuery = "SELECT * FROM user WHERE username = ? AND password = ?";
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        ps.setString(1, userName);
+        ps.setString(2, pass);
+        User result = null;
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result = new User(rs.getInt(1), rs.getString(2), rs.getString(4), rs.getString(3));
         }
         return result;
     }
