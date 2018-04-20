@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Date;
-
 public class Comment {
     private int userID;
     private int commentID;
@@ -35,5 +33,9 @@ public class Comment {
 
     public String getTime() {
         return time;
+    }
+
+    public String getDateTime() {
+        return getDate() + " " + getTime();
     }
 }

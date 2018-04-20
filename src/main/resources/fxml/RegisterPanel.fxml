@@ -27,14 +27,14 @@
                         <Label alignment="CENTER" prefHeight="35.0" prefWidth="94.0" text="Email"
                                GridPane.rowIndex="2"/>
                         <TextField fx:id="userNameTextField" maxHeight="-Infinity" maxWidth="-Infinity"
-                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0"
+                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0"
                                    GridPane.columnIndex="1"/>
-                        <TextField fx:id="passwordTextField" maxHeight="-Infinity" maxWidth="-Infinity"
-                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0"
-                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                         <TextField fx:id="emailTextField" maxHeight="-Infinity" maxWidth="-Infinity"
-                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0"
+                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="133.0"
                                    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <PasswordField fx:id="passwordTextField" maxHeight="-Infinity" maxWidth="-Infinity"
+                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="131.0"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                     </children>
                 </GridPane>
             </children>

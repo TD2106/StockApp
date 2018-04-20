@@ -1,6 +1,8 @@
 package controller;
 
 import dao.CommentDAO;
+import dao.PortfolioDAO;
+import dao.UserDAO;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,7 +15,10 @@ import model.Comment;
 import model.Portfolio;
 import model.User;
 import model.UserStock;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class ProfileController {
@@ -89,6 +94,7 @@ public class ProfileController {
 
     private ObservableList<Comment> comments = FXCollections.observableArrayList();
 
+    private UserStock currentStock = null;
     public void setUp() {
         stocks.addAll(portfolio.getStocks());
         try {
@@ -102,7 +108,23 @@ public class ProfileController {
         priceColumn.setCellValueFactory(rowData -> new SimpleDoubleProperty(rowData.getValue().getPrice()).asObject());
         quantityColumn.setCellValueFactory(rowData -> new SimpleIntegerProperty(rowData.getValue().getQuantity()).asObject());
         valueColumn.setCellValueFactory(rowData -> new SimpleDoubleProperty(rowData.getValue().getTotalValue()).asObject());
-
+        userNameCommentColumn.setCellValueFactory(rowData -> {
+            try {
+                return new SimpleStringProperty(UserDAO.getUserName(rowData.getValue().getUserID()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new SimpleStringProperty("");
+            }
+        });
+        timeCommentColumn.setCellValueFactory(rowData -> new SimpleStringProperty(rowData.getValue().getDateTime()));
+        contentCommentColumn.setCellValueFactory(rowData -> new SimpleStringProperty(rowData.getValue().getContent()));
+        portfolioTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                currentStock = newValue;
+                stockQuantity.setText(Integer.toString(currentStock.getQuantity()));
+            }
+        });
+        totalValueLabel.textProperty().bind(new SimpleDoubleProperty(portfolio.totalWorth()).asString());
     }
 
 
@@ -116,17 +138,77 @@ public class ProfileController {
 
     @FXML
     void deleteStock(ActionEvent event) {
-
+        if (currentStock == null) {
+            showError("You need to select stock to delete");
+            return;
+        } else {
+            portfolio.deleteStock(currentStock.getStockName());
+            try {
+                PortfolioDAO.deleteStock(user.getUserID(), currentStock.getStockName());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            currentStock = null;
+            stockQuantity.setText("");
+            resetPortfolioTable();
+        }
     }
 
     @FXML
-    void login(ActionEvent event) {
-
+    void addStock(ActionEvent event) {
+        Stock stock = null;
+        if (portfolio.isStockExist(stockNameTextField.getText().toUpperCase())) {
+            showError("Stock already exists in portfolio");
+            return;
+        }
+        try {
+            stock = YahooFinance.get(stockNameTextField.getText().toUpperCase());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Something wrong happened try again");
+            return;
+        }
+        if (stock == null) {
+            showError("Invalid stock name");
+            return;
+        }
+        int quantity = 0;
+        try {
+            quantity = Integer.parseInt(quantityTextField.getText());
+        } catch (NumberFormatException e) {
+            showError("Wrong format for input");
+            return;
+        }
+        if (quantity <= 0) {
+            showError("Input needs to be greater than 0");
+            return;
+        }
+        try {
+            PortfolioDAO.addNewStock(user.getUserID(), stockNameTextField.getText().toUpperCase(), quantity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError("Something wrong happen try again");
+            return;
+        }
+        portfolio.addStock(new UserStock(stockNameTextField.getText().toUpperCase(), quantity));
+        resetPortfolioTable();
+        showInformation("Success");
     }
 
     @FXML
     void postComment(ActionEvent event) {
-
+        if (commentInput.getText().equals("") || commentInput.getText() == null) {
+            showError("You need to input something");
+            return;
+        }
+        try {
+            CommentDAO.addComment(commentInput.getText(), user.getUserID());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError("Something wrong happened");
+            return;
+        }
+        resetCommentTable();
     }
 
     @FXML
@@ -136,13 +218,58 @@ public class ProfileController {
 
     @FXML
     void refreshComment(ActionEvent event) {
-
+        resetCommentTable();
     }
 
     @FXML
     void updateStock(ActionEvent event) {
-
+        if (currentStock == null || stockQuantity.getText() == null || stockQuantity.getText().equals("")) {
+            showError("You need to select stock or input quantity");
+            return;
+        }
+        int newQuantity = 0;
+        try {
+            newQuantity = Integer.parseInt(stockQuantity.getText());
+        } catch (NumberFormatException e) {
+            showError("Wrong format for input");
+            return;
+        }
+        if (newQuantity <= 0) {
+            showError("Input needs to be greater than 0");
+            return;
+        }
+        try {
+            PortfolioDAO.editStock(user.getUserID(), currentStock.getStockName(), newQuantity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        portfolio.editStock(currentStock.getStockName(), newQuantity);
+        resetPortfolioTable();
+        showInformation("Success");
     }
 
+    public void resetPortfolioTable() {
+        stocks.clear();
+        stocks.addAll(portfolio.getStocks());
+        totalValueLabel.textProperty().bind(new SimpleDoubleProperty(portfolio.totalWorth()).asString());
+    }
 
+    public void showError(String s) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, s);
+        alert.show();
+    }
+
+    public void resetCommentTable() {
+        comments.clear();
+        try {
+            comments.addAll(CommentDAO.getAllComments());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showInformation(String s) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, s);
+        alert.show();
+    }
 }
