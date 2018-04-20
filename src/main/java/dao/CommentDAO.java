@@ -22,7 +22,7 @@ public class CommentDAO {
         }
     }
 
-    public void addComment(String content, int userID) throws SQLException {
+    public static void addComment(String content, int userID) throws SQLException {
         String sqlQuery = "INSERT INTO comment(content,userid,commentdate,commenttime) VALUES (?,?,CURDATE(),TIME(NOW()))";
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
         ps.setString(1, content);
@@ -30,7 +30,7 @@ public class CommentDAO {
         ps.execute();
     }
 
-    public ArrayList<Comment> getAllComments() throws SQLException {
+    public static ArrayList<Comment> getAllComments() throws SQLException {
         String sqlQuery = "SELECT commentid,userid,content,commentdate,commenttime FROM comment";
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
         ResultSet rs = ps.executeQuery();

@@ -1,5 +1,9 @@
 package controller;
 
+import dao.CommentDAO;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,6 +13,8 @@ import model.Comment;
 import model.Portfolio;
 import model.User;
 import model.UserStock;
+
+import java.sql.SQLException;
 
 public class ProfileController {
 
@@ -84,8 +90,21 @@ public class ProfileController {
     private ObservableList<Comment> comments = FXCollections.observableArrayList();
 
     public void setUp() {
+        stocks.addAll(portfolio.getStocks());
+        try {
+            comments.addAll(CommentDAO.getAllComments());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        portfolioTable.setItems(stocks);
+        commentTable.setItems(comments);
+        stockNameColumn.setCellValueFactory(rowData -> new SimpleStringProperty(rowData.getValue().getStockName()));
+        priceColumn.setCellValueFactory(rowData -> new SimpleDoubleProperty(rowData.getValue().getPrice()).asObject());
+        quantityColumn.setCellValueFactory(rowData -> new SimpleIntegerProperty(rowData.getValue().getQuantity()).asObject());
+        valueColumn.setCellValueFactory(rowData -> new SimpleDoubleProperty(rowData.getValue().getTotalValue()).asObject());
 
     }
+
 
     public void setUser(User user) {
         this.user = user;
