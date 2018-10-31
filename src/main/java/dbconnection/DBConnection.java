@@ -11,7 +11,7 @@ import java.sql.*;
  */
 public class DBConnection {
     private static Connection dbConnection;
-    private static String connectionURL = "jdbc:mysql://localhost:3306/stockapp";
+    private static String connectionURL = "jdbc:mysql://localhost:3306/StockApp";
     private static String user = "root";
     private static String password = "lutden";
 

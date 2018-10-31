@@ -18,7 +18,7 @@ import model.UserStock;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 
 public class ProfileController {
@@ -213,7 +213,22 @@ public class ProfileController {
 
     @FXML
     void predict(ActionEvent event) {
-
+        try {
+            String stock = stockToPredict.getText().toUpperCase();
+            String[] cmd = {
+                    "/bin/bash",
+                    "-c",
+                    "python3 ~/Desktop/SE/test.py " + stock
+            };
+            Process process = Runtime.getRuntime().exec(cmd);
+            InputStream inputStream = process.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String result = bufferedReader.readLine();
+            showInformation(result);
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -82,11 +82,5 @@ public class UserDAO {
         }
         return result;
     }
-//    public static void main(String[] args){
-//        try {
-//            addUser("Duy", "123", "td@gmail.com");
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 }
